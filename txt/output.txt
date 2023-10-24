@@ -1,0 +1,4 @@
+Yeni eklenen metin:
+ suan input text icerisindeki bir texti okuyorsun
+. 
+ Olusturulma Tarihi:1698162574023
