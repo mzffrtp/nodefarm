@@ -2,6 +2,11 @@ const fs = require("fs");
 const http = require("http")
 
 const data = fs.readFileSync(`${__dirname}/dev_data/data.json`, "utf-8")
+let tempOverview = fs.readFileSync(`${__dirname}/templates/template-overview.html`, "utf-8")
+let tempCard = fs.readFileSync(`${__dirname}/templates/template-card.html`, "utf-8")
+let tempProduct = fs.readFileSync(`${__dirname}/templates/template-product.html`, "utf-8")
+
+
 
 const dataObj = JSON.parse(data)
 const server = http.createServer((req, res) => {
@@ -9,7 +14,10 @@ const server = http.createServer((req, res) => {
         res.writeHead(200, {
             "Context-Type": "text/html"
         })
-        res.end("<h1> You are at the main page <h1>")
+        const cardHtml = dataObj.map(() => tempCard).join("")
+        const cardOutput = tempOverview.replace("{%PRODUCT_CARDS%}", cardHtml)
+        res.end(cardOutput)
+
     } else if (req.url === "/product") {
         res.writeHead(200, {
             "Content-Type": "text/html"
