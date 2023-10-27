@@ -1,5 +1,6 @@
 const fs = require("fs");
 const http = require("http")
+const replaceTemplate = require("./modules/replaceTemplate")
 
 const data = fs.readFileSync(`${__dirname}/dev_data/data.json`, "utf-8")
 let tempOverview = fs.readFileSync(`${__dirname}/templates/template-overview.html`, "utf-8")
@@ -14,7 +15,7 @@ const server = http.createServer((req, res) => {
         res.writeHead(200, {
             "Context-Type": "text/html"
         })
-        const cardHtml = dataObj.map(() => tempCard).join("")
+        const cardHtml = dataObj.map((el) => replaceTemplate(tempCard, el)).join("")
         const cardOutput = tempOverview.replace("{%PRODUCT_CARDS%}", cardHtml)
         res.end(cardOutput)
 
