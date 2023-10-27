@@ -1,6 +1,7 @@
 const fs = require("fs");
 const http = require("http")
 const replaceTemplate = require("./modules/replaceTemplate")
+const url = require("url")
 
 const data = fs.readFileSync(`${__dirname}/dev_data/data.json`, "utf-8")
 let tempOverview = fs.readFileSync(`${__dirname}/templates/template-overview.html`, "utf-8")
@@ -11,7 +12,9 @@ let tempProduct = fs.readFileSync(`${__dirname}/templates/template-product.html`
 
 const dataObj = JSON.parse(data)
 const server = http.createServer((req, res) => {
-    if (req.url === "/" || req.url === "/overview") {
+    const { query, pathname } = url.parse(req.url, true)
+
+    if (pathname === "/" || pathname === "/overview") {
         res.writeHead(200, {
             "Context-Type": "text/html"
         })
@@ -19,13 +22,15 @@ const server = http.createServer((req, res) => {
         const cardOutput = tempOverview.replace("{%PRODUCT_CARDS%}", cardHtml)
         res.end(cardOutput)
 
-    } else if (req.url === "/product") {
+    } else if (pathname === "/product") {
         res.writeHead(200, {
             "Content-Type": "text/html"
         });
-        res.end("You are at the products page now! ")
+        const product = dataObj[query.id]
+        const productDetail = replaceTemplate(tempProduct, product);
+        res.end(productDetail)
     }
-    else if (req.url === "/api") {
+    else if (pathname === "/api") {
         res.writeHead(200, {
             "Content-type": "application/json"
         })
